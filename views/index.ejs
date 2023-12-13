@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src='main.js'></script>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-flow: column;
+            position: relative ;
+        }
+        #remove{
+            display: flex;
+            flex-direction: column; 
+            overflow-y: auto;
+            padding-bottom:30px;
+            height: calc(100vh - 200px);
+        }
+        .writer{
+            bottom: 0;
+            width: 100%;    
+            display: flex;
+            justify-content: center ;
+            padding: 50px 0;
+            background-color: white;
+        }
+
+        .writer > input[type="submit"]{
+            width: 50px;
+        }
+        #time{
+            font-size: 12px;
+        }
+        fieldset{
+            display: flex;  
+            flex-flow: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+        fieldset > legend{
+            color: green;
+            font-weight: bold    ;
+        }
+    </style>
+</head>
+<body>
+    <div id="message">
+        <div id="remove"></div>
+    </div>
+    <form class="writer" onsubmit=sendForm(event)>
+        <div>
+            <input  type="text" placeholder="User name" name="User" id="User">
+            <br>
+            <label for="UserActive">Block name</label>
+            <input type="checkbox" name="UserCheckbox" onchange=UserActive(event)>
+        </div>
+        <input type="text" name="Text" id="Text" />
+        <input type="submit"value="->"/>
+    </form>
+</body>
+<script>
+    window.addEventListener("load",()=>{
+        FPS(1)
+    })
+    function sendForm(e){
+        e.preventDefault()
+        fetch("http://localhost:8080/chat",{
+            method:"POST",
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                "User": e.target.User.value, 
+                "Text": e.target.Text.value,  
+            })
+        },)
+        .then(
+            renderMessages()
+        ).
+        catch((error) => {if(error) console.log("falha")})
+    }
+    function renderMessages(){
+        const message = document.getElementById("message");
+        fetch("http://localhost:8080/chat",{
+                method:"GET"
+            })
+            .then(Response => Response.json())
+            .then(data => {
+                    message.removeChild(message.querySelector("#remove"));
+                    let remove = document.createElement("div")
+                    remove.setAttribute("id","remove")
+                    message.appendChild(remove)
+                data.forEach((value) => {
+                    const campo = document.createElement("fieldset")
+                    let template = `
+                            <legend>${value.User}</legend>
+                            <div>${value.Text}</div>
+                            <div id="time">${value.Time}</div>
+                        `
+                    campo.innerHTML = template;
+                    message.querySelector("#remove").appendChild(campo)
+                })
+                message.lastChild.scrollIntoView();
+            })
+            .catch(error => {
+                const campo = document.createElement("div")
+            })
+        
+    }
+    function UserActive(e){
+        let actived = e.target.checked;
+        let user = document.getElementById("User")
+
+        if(actived){
+            user.setAttribute("disabled", true)
+        }else{
+            user.removeAttribute("disabled")    
+        }
+    }
+    async function FPS(timeDelay){
+        
+        await setTimeout(() =>{
+            renderMessages()
+        } ,(1000*timeDelay))
+        
+    }
+    
+
+</script>
+</html>
