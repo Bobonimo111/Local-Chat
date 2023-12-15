@@ -1,27 +1,31 @@
 const express = require('express')
 const fakeDb = require("./FakeDb")
 const db = new fakeDb();
-const App = express()
+const app = express()
+const server = require("http").createServer(app)
+const io = require("socket.io")
 
 const Config = require("./config");
-const config = require('./config');
 const cors = require("cors")
 
-App.set("view engine", 'ejs')
-App.use(express.urlencoded({ extended: true }))
-App.use(express.json())
-App.set(ServerStart())
-App.use(cors())
+app.set("view engine", 'ejs')
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
+app.set(ServerStart())
+app.use(cors())
 
+app.get("/", (req, res) => {
+    res.render("home")
+})
 
-App.get('/', (req, res) => {
+app.get('/chat', (req, res) => {
     res.render("index")
 })
 
-App.post("/chat", (req, res) => {
+
+app.post("/chats", (req, res) => {
     let user = req.body.User;
     let text = req.body.Text;
-
     if (user == undefined || text == undefined) {
         res.sendStatus(401).send("dados invalidos")
     } else {
@@ -32,13 +36,13 @@ App.post("/chat", (req, res) => {
     }
 })
 
-App.get("/chat", (req, res) => {
+app.get("/chat", (req, res) => {
     res.send(db.fullData)
 })
 
 async function ServerStart() {
     const { ip, port } = await Config()
-    App.listen(port, (error) => {
+    server.listen(port, (error) => {
         console.log(`Iniciando servidor`);
         if (error) console.log("falha ao iniciar")
         else {

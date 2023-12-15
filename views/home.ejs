@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form onsubmit=submited(event)>
+        <label for="name">Set your user name:</label>
+        <input type="text" name="name" id="name">
+        <input type="submit" value="set"> 
+    </form>
+    
+</body>
+    <script>
+        window.addEventListener("load",()=>{
+            if(localStorage.getItem("userName") !== undefined){
+                let name = document.getElementById("name");
+                name.value = localStorage.getItem("userName")
+            }           
+        })
+        function submited(e){
+            e.preventDefault();
+            let name = (e.target.name.value).trim();
+            if(name == undefined || name == ""){
+                alert("Nome invalido")
+            }else{
+                localStorage.setItem("userName",name)
+                window.location.href = "http://localhost:8080/chat"
+            }
+        }
+    </script>
+</html>
