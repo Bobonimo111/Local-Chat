@@ -15,19 +15,38 @@
     </div>
     <form class="writer" onsubmit=sendMessage(event)>
         <div class="userName"></div>
-        <input type="text" name="Text" id="Text" />
+        <input type="text" name="text" id="text" />
         <input type="submit"value="->"/>
     </form>
 </body>
 <script>
     window.addEventListener("load",()=>{
         let userName = localStorage.getItem("userName")
-        if(userName == undefined || userName == ""){
-            alert("nome de usuario não esta presente por favo preencher")
+        if(userName == undefined && userName == ""){
+            alert("nome de usuario não esta presente por favor preencher")
             location.href = "http://localhost:8080"
+        }else{
+            document.querySelector(".userName").innerText = userName;
         }
     })
-
+    function sendMessage(e){
+        e.preventDefault();
+        let message  = (e.target.text.value).trim()
+        if(message !== undefined && message !== ""){
+            e.target.text.value = "";
+            let reqConfig = {
+                method : "POST",
+                headers : {"content-type" : "application/json"},
+                body : JSON.stringify({
+                    user : localStorage.getItem("userName"),
+                    text : message
+                })
+            }
+            fetch("http://localhost:8080/chat",reqConfig)
+            .then(value => console.log(value))
+        }
+        
+    }
 
 </script>
 </html>

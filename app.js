@@ -22,23 +22,23 @@ app.get('/chat', (req, res) => {
     res.render("index")
 })
 
+app.get("/chats", (req, res) => {
+    res.send(db.fullData)
+})
 
-app.post("/chats", (req, res) => {
-    let user = req.body.User;
-    let text = req.body.Text;
+app.post("/chat", (req, res) => {
+    let user = req.body.user;
+    let text = req.body.text;
     if (user == undefined || text == undefined) {
         res.sendStatus(401).send("dados invalidos")
     } else {
         db.newMsg({ user: user, text: text })
         res.sendStatus(200)
         res.statusCode = 200
-        //console.log(db.fullData)
+        console.log(db.fullData)
     }
 })
 
-app.get("/chat", (req, res) => {
-    res.send(db.fullData)
-})
 
 async function ServerStart() {
     const { ip, port } = await Config()

@@ -23,7 +23,7 @@
         function submited(e){
             e.preventDefault();
             let name = (e.target.name.value).trim();
-            if(name == undefined || name == ""){
+            if(name == undefined && name == ""){
                 alert("Nome invalido")
             }else{
                 localStorage.setItem("userName",name)
