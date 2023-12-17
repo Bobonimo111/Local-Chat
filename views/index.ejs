@@ -7,7 +7,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
     <script src='main.js'></script>
-    
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
     <div id="message">
@@ -22,10 +22,11 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     const socket = io();
-    const TemplateMsg = (user,text)=>{
+    const TemplateMsg = (user,text,time)=>{
         return (`<fieldset>
             <legend>${user}</legend>
             <div>${text}</div>
+            <div>${time}</div>
                 </fieldset>
         `)
     }
@@ -85,10 +86,12 @@
             }
         })
         .then(value => {
+            let date = new Date();
             value.forEach(content =>{
                 const messageDiv = document.querySelector("#message")
                 const elementDiv = document.createElement("div")
-                elementDiv.innerHTML = TemplateMsg(content.User,content.Text)
+                
+                elementDiv.innerHTML = TemplateMsg(content.User,content.Text,date.toString(content.Time))
                 messageDiv.appendChild(elementDiv);
             })
         })

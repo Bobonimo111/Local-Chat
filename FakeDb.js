@@ -10,10 +10,6 @@ class FakeDb {
     get fullData() {
         return this.data;
     }
-    get lastChat() {
-        let chat = this.data;
-        return chat[chat.length - 1]
-    }
     newMsg({ user = "any", text }) {
         let date = new Date();
         //let time = `${date.getFullYear()}${date.getmon()}${date.getDay()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}`
