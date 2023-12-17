@@ -24,9 +24,9 @@
     const socket = io();
     const TemplateMsg = (user,text)=>{
         return (`<fieldset>
-            <legend>${user}</lengend>
+            <legend>${user}</legend>
             <div>${text}</div>
-        </fieldset>
+                </fieldset>
         `)
     }
     window.addEventListener("load",()=>{
@@ -36,6 +36,7 @@
             location.href = "http://localhost:8080"
         }else{
             document.querySelector(".userName").innerText = userName;
+            firstRender();
         }
     })
     function sendMessage(e){
@@ -73,15 +74,23 @@
             messageDiv.appendChild(elementDiv);
         })
     }
-    function renderMessages(){
+    function firstRender(){
         fetch("http://localhost:8080/chats")
         .then(value => value.json())
-        .then(value => value[value.length - 1])
         .then(value => {
-            const messageDiv = document.querySelector("#message")
-            const elementDiv = document.createElement("div")
-            elementDiv.innerHTML = TemplateMsg(value.User,value.Text)
-            messageDiv.appendChild(elementDiv);
+            if (value.lenth >= 10){
+                return value.slice(value.length - 10,value.length - 1)
+            }else{
+                return value;
+            }
+        })
+        .then(value => {
+            value.forEach(content =>{
+                const messageDiv = document.querySelector("#message")
+                const elementDiv = document.createElement("div")
+                elementDiv.innerHTML = TemplateMsg(content.User,content.Text)
+                messageDiv.appendChild(elementDiv);
+            })
         })
     }
 

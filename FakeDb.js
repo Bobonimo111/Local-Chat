@@ -2,7 +2,7 @@
 class FakeDb {
     constructor() {
         this.data = [{
-            Name: "admin",
+            User: "Admin",
             Text: "ola a todos, sejam bem vindos."
         }]
 
