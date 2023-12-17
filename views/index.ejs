@@ -11,7 +11,7 @@
 </head>
 <body>
     <div id="message">
-        <div id="remove"></div>
+        
     </div>
     <form class="writer" onsubmit=sendMessage(event)>
         <div class="userName"></div>
@@ -19,7 +19,16 @@
         <input type="submit"value="->"/>
     </form>
 </body>
+<script src="/socket.io/socket.io.js"></script>
 <script>
+    const socket = io();
+    const TemplateMsg = (user,text)=>{
+        return (`<fieldset>
+            <legend>${user}</lengend>
+            <div>${text}</div>
+        </fieldset>
+        `)
+    }
     window.addEventListener("load",()=>{
         let userName = localStorage.getItem("userName")
         if(userName == undefined && userName == ""){
@@ -43,10 +52,43 @@
                 })
             }
             fetch("http://localhost:8080/chat",reqConfig)
-            .then(value => console.log(value))
+            .then(value => {
+                console.log("Sucesso")
+                socket.emit("sendMessage",true)
+            })
+        
+        }else{
+            console.log("mensagem invalida")
         }
         
     }
+    function renderMessage(){
+        fetch("http://localhost:8080/chats")
+        .then(value => value.json())
+        .then(value => value[value.length - 1])
+        .then(value => {
+            const messageDiv = document.querySelector("#message")
+            const elementDiv = document.createElement("div")
+            elementDiv.innerHTML = TemplateMsg(value.User,value.Text)
+            messageDiv.appendChild(elementDiv);
+        })
+    }
+    function renderMessages(){
+        fetch("http://localhost:8080/chats")
+        .then(value => value.json())
+        .then(value => value[value.length - 1])
+        .then(value => {
+            const messageDiv = document.querySelector("#message")
+            const elementDiv = document.createElement("div")
+            elementDiv.innerHTML = TemplateMsg(value.User,value.Text)
+            messageDiv.appendChild(elementDiv);
+        })
+    }
+
+    socket.on("renderMessage",(value)=>{
+        console.log("Mensagem rederizada")
+        renderMessage();
+    })
 
 </script>
 </html>

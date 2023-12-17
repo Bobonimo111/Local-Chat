@@ -9,6 +9,7 @@ async function getIp() {
 
 async function config() {
     return {
+        domain: "192.168.0.105",
         ip: await getIp(),
         port: 8080
     }

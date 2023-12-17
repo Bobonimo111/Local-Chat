@@ -2,10 +2,11 @@ const express = require('express')
 const fakeDb = require("./FakeDb")
 const db = new fakeDb();
 const app = express()
-const server = require("http").createServer(app)
-const io = require("socket.io")
+const server_ = require("http").createServer(app)
+const { Server } = require("socket.io")
+const io = new Server(server_)
 
-const Config = require("./config");
+const Config = require("./Config");
 const cors = require("cors")
 
 app.set("view engine", 'ejs')
@@ -26,6 +27,12 @@ app.get("/chats", (req, res) => {
     res.send(db.fullData)
 })
 
+io.on('connection', (socket) => {
+    socket.on("sendMessage", (value) => {
+        io.emit("renderMessage", true)
+    })
+})
+
 app.post("/chat", (req, res) => {
     let user = req.body.user;
     let text = req.body.text;
@@ -35,18 +42,18 @@ app.post("/chat", (req, res) => {
         db.newMsg({ user: user, text: text })
         res.sendStatus(200)
         res.statusCode = 200
-        console.log(db.fullData)
+        //console.log(db.fullData)
     }
 })
 
 
 async function ServerStart() {
-    const { ip, port } = await Config()
-    server.listen(port, (error) => {
+    const { ip, port, domain } = await Config()
+    server_.listen(port, (error) => {
         console.log(`Iniciando servidor`);
         if (error) console.log("falha ao iniciar")
         else {
-            console.log(`servidor iniciado ${ip}:${port}`)
+            console.log(`servidor iniciado ${domain}:${port}`)
 
         }
     })
