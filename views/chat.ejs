@@ -16,7 +16,7 @@
     </div>
     <form class="writer" onsubmit=sendMessage(event)>
         <div class="userName"></div>
-        <input type="text" name="text" id="text" />
+        <textarea name="text" id="text"></textarea>
         <input type="submit"value="->"/>
     </form>
 </section>
@@ -28,7 +28,7 @@
     let TemplateMsg = (user,text,time)=>{
         return (`<fieldset>
                     <legend>${user}</legend>
-                    <p class="text">${text}</p>
+                    <div class="text">${text}</div>
                     <div class="time">${time}</div>
                 </fieldset>`)
     }
@@ -44,9 +44,8 @@
     })
     function sendMessage(e){
         e.preventDefault();
-        let message  = ((e.target.text.value).trim()).toString()
+        let message  = (((e.target.text.value).trim()).toString()).split(" ")
         if(message !== undefined && message !== ""){
-            e.target.text.value = "";
             let reqConfig = {
                 method : "POST",
                 headers : {"content-type" : "application/json"},
@@ -58,6 +57,7 @@
             fetch("http://localhost:8080/chat",reqConfig)
             .then(value => {
                 console.log("Sucesso")
+                e.target.text.value = "";
                 socket.emit("sendMessage",true)
             })
         

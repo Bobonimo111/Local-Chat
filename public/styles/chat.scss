@@ -1,0 +1,78 @@
+$border :rgb(127, 130, 130);
+$bg_primary : rgb(229, 242, 244);
+$bg_seccondary : rgb(230, 230, 230);
+
+#webChat {
+    position: relative;
+    background-color: $bg_primary;
+    padding: 15px 10px 10px 10px;
+    border-radius: 14px;
+    height: 20rem;
+    max-width: 30rem;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+
+    #message {
+        overflow-y: scroll;
+        overflow-x: hidden;
+
+        fieldset {
+            border-radius: 7px;
+            display: flex;
+            flex-flow: column;
+
+            legend {
+                font-size: 12px;
+                font-weight: bold;
+            }
+
+            .text {
+                font-size: 20pt;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+
+
+            .time {
+                font-size: 10pt
+            }
+        }
+
+
+    }
+
+    .writer {
+        position: relative;
+        bottom: 0;
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+
+        div {
+            flex-grow: 1;
+            font-weight: bold;
+            text-transform: capitalize;
+
+        }
+
+        input[type=submit] {
+            flex-grow: 1;
+            height: 20pt;
+            border: 1px solid $border;
+            border-radius: 7px;
+            background-color: $bg_seccondary;
+            font-size: 15pt;
+        }
+
+        textarea {
+            height: 25pt;
+            font-size: 18pt;
+            flex-grow: 5;
+
+            border: 1px solid $border;
+            border-radius: 7px;
+            background-color: $bg_seccondary;
+        }
+    }
+}
