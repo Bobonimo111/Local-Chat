@@ -14,13 +14,14 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.set(ServerStart())
 app.use(cors())
+app.use(express.static(__dirname + "/public"))
 
 app.get("/", (req, res) => {
     res.render("home")
 })
 
 app.get('/chat', (req, res) => {
-    res.render("index")
+    res.render("chat")
 })
 
 app.get("/chats", (req, res) => {
