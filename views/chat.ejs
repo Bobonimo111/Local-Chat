@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Page Title</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+   
+    <script src='main.js'></script>
+    <link rel="stylesheet" href="styles/chat.css">
+</head>
+<body>
+<section id="webChat">
+    <div id="message">
+        
+    </div>
+    <form class="writer" onsubmit=sendMessage(event)>
+        <div class="userName"></div>
+        <input type="text" name="text" id="text" />
+        <input type="submit"value="->"/>
+    </form>
+</section>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    let date = new Date();
+    let TemplateMsg = (user,text,time)=>{
+        return (`<fieldset>
+                    <legend>${user}</legend>
+                    <p class="text">${text}</p>
+                    <div class="time">${time}</div>
+                </fieldset>`)
+    }
+    window.addEventListener("load",()=>{
+        let userName = localStorage.getItem("userName")
+        if(userName == undefined && userName == ""){
+            alert("nome de usuario não esta presente por favor preencher")
+            location.href = "http://localhost:8080"
+        }else{
+            document.querySelector(".userName").innerText = userName;
+            firstRender();
+        }
+    })
+    function sendMessage(e){
+        e.preventDefault();
+        let message  = ((e.target.text.value).trim()).toString()
+        if(message !== undefined && message !== ""){
+            e.target.text.value = "";
+            let reqConfig = {
+                method : "POST",
+                headers : {"content-type" : "application/json"},
+                body : JSON.stringify({
+                    user : localStorage.getItem("userName"),
+                    text : message
+                })
+            }
+            fetch("http://localhost:8080/chat",reqConfig)
+            .then(value => {
+                console.log("Sucesso")
+                socket.emit("sendMessage",true)
+            })
+        
+        }else{
+            console.log("mensagem invalida")
+        }
+        
+    }
+    function renderMessage(){
+        fetch("http://localhost:8080/chats")
+        .then(value => value.json())
+        .then(value => value[value.length - 1])
+        .then(value => {
+            const messageDiv = document.querySelector("#message")
+            const elementDiv = document.createElement("div")
+            elementDiv.innerHTML = TemplateMsg(value.User,value.Text,date.toString(value.Time))
+            messageDiv.appendChild(elementDiv);
+        })
+    }
+    function firstRender(){
+        fetch("http://localhost:8080/chats")
+        .then(value => value.json())
+        .then(value => {
+            if (value.lenth >= 10){
+                return value.slice(value.length - 10,value.length - 1)
+            }else{
+                return value;
+            }
+        })
+        .then(value => {
+           
+            value.forEach(content =>{
+                const messageDiv = document.querySelector("#message")
+                const elementDiv = document.createElement("div")
+                elementDiv.innerHTML = TemplateMsg(content.User,content.Text,date.toString(content.Time))
+                messageDiv.appendChild(elementDiv);
+            })
+        })
+    }
+
+    socket.on("renderMessage",(value)=>{
+        console.log("Mensagem rederizada")
+        renderMessage();
+    })
+
+</script>
+</html>
